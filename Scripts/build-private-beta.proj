@@ -1,0 +1,36 @@
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <SolutionFile>.\..\Mapsui.sln</SolutionFile>
+    <SolutionDir>$(MSBuildProjectDirectory)</SolutionDir>
+    <ToolsHome Condition=" '$(ToolsHome)'=='' ">$(MSBuildProjectDirectory)\..\tools\</ToolsHome>
+  </PropertyGroup>
+  
+  <Target Name="BuildRelease" DependsOnTargets="CleanRelease;RestorePackages">
+
+    <MSBuild Projects="$(SolutionFile)"
+             Targets="Mapsui"
+             Properties="Configuration=Release;BaseIntermediateOutputPath=$(MSBuildProjectDirectory).\..\obj\portable\;OutputPath=$(MSBuildProjectDirectory).\..\Release\Portable\" />
+
+    <MSBuild Projects="$(SolutionFile)"
+             Targets="Mapsui;Mapsui_Rendering_Xaml;Mapsui_UI_Xaml"
+             Properties="Configuration=Release;Platform=Any CPU;BaseIntermediateOutputPath=$(MSBuildProjectDirectory).\..\obj\v4.0.3\;OutputPath=$(MSBuildProjectDirectory).\..\Release\v4.0.3\"
+             RunEachTargetSeparately="true"/>
+
+    <MSBuild Projects="$(SolutionFile)"
+             Targets="Mapsui;Mapsui_Rendering_Gdi;Mapsui_UI_WinForms"
+             Properties="Configuration=Release;Platform=Any CPU;BaseIntermediateOutputPath=$(MSBuildProjectDirectory).\..\obj\WinForms\;OutputPath=$(MSBuildProjectDirectory).\..\Release\WinForms\"
+             RunEachTargetSeparately="true"/>
+
+  </Target>
+    
+  <Target Name="CleanRelease">
+    <Exec Command="rmdir /s /q $(MSBuildProjectDirectory).\..\obj"></Exec>
+    <Exec Command="rmdir /s /q $(MSBuildProjectDirectory).\..\Release"></Exec>
+  </Target>
+  
+  <Target Name="RestorePackages">
+    <Exec Command="&quot;$(ToolsHome)NuGet\NuGet.exe&quot; restore .\..\Mapsui.sln" />
+  </Target>
+  
+</Project>
